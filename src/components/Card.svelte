@@ -1,13 +1,14 @@
 <script>
+// @ts-nocheck
+
 	import { draggable } from "$lib/dnd";
-    let date = new Date();
-    let year = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(date);
-    let month = new Intl.DateTimeFormat('en', { month: 'short' }).format(date);
-    let day = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(date);
 
     const filters = ["Todos","Activos","Completados"]
     let filterselected = "Todos"
+    let newtodo = ""
 
+    let todos = [{id: Math.random().toFixed(0), text: "texto prueba2", finished: false}, {id: Math.random().toFixed(0), text: "texto prueba343", finished: true}, {id: Math.random().toFixed(0), text: "texto pruebasdf", finished: false}]
+    let filtered = []
 </script>
 <div class="container" use:draggable={"test"}>
     <div class="title">
@@ -23,12 +24,31 @@
             {/each}
         </div>
     </div>
-    <input class="new-todo" type="text" placeholder="Nueva tarea">
-</div>
+    <input bind:value={newtodo} class="new-todo" type="text" on:keyup={(e)=>{
+        if(e.key == "Enter") {
+            todos.push({ id: Math.random().toFixed(0), text: newtodo, finished:false})
+            todos = [...todos]
+            newtodo = ""
+        }
+    }} placeholder="Nueva tarea" >
+</div> 
 <div class="todos">
+    {#if todos.length > 0}
+    {#each todos as todo, idx}
+    <div class="todo">
+        <input type="checkbox" bind:checked={todo.finished} on:change={(e)=>{todo.finished=e.target.checked}} id="{todo.text + idx}" />
+        <label class="{todo.finished ? 'finished' : ''}" for="{todo.text + idx}">{todo.text}</label>
+        <button on:click={()=>{
+            todos.splice(idx,1)
+            todos = todos
+        }} type="button">🗑</button>
+    </div>
+    {/each}
+    {:else}
     <div class="no-todos">
         Sin pendientes
     </div>
+    {/if}
 </div>
 <style>
     @import url('https://fonts.googleapis.com/css?family=DM+Sans:400,500,700&display=swap');
@@ -49,7 +69,7 @@
     }
     .task{
         display: grid;
-        grid-template-columns: 50% 50%;
+        grid-template-columns: 30% 70%;
         & > span{
             color: #949494;
         }
@@ -61,6 +81,7 @@
             cursor: pointer;
             border-radius: 15px;
             height: 25px;
+            margin: 0 5px;
         }
         & > .isactive{
             background-color: #7996a5;
@@ -77,10 +98,29 @@
         background-color: whitesmoke;
     }
     .todos{
+        display: block;
         width: 480px;
-        height: 150px;
+        padding-top: 15px;
+        padding-bottom: 15px;
         background-color: whitesmoke;
         border-radius: 0 0 16px 16px;
+    }
+    .todo{
+        display: grid;
+        grid-template-columns: 10% 80% 10%;
+        padding-right: 15px;
+        margin-bottom: 5px;
+        &> button{
+            color: red;
+        }
+        & > *{
+            cursor: pointer;
+            user-select: none;
+        }
+    }
+    .finished{
+        color: #929292;
+        text-decoration-line: line-through;
     }
     .no-todos{
         width: 100%;
@@ -88,5 +128,8 @@
         font-weight: bold;
         font-size: larger;
         opacity: .3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>
