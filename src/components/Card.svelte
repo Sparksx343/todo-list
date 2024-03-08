@@ -39,6 +39,7 @@
             todos.push({ id: Math.random().toFixed(0), text: newtodo, finished:false})
             todos = [...todos]
             newtodo = ""
+            getFiltered()
         }
     }} placeholder="Nueva tarea" >
 </div> 
