@@ -5,8 +5,19 @@
     let newtodo = ""
 
     let todos = [{id: Math.random().toFixed(0), text: "texto prueba2", finished: false}, {id: Math.random().toFixed(0), text: "texto prueba343", finished: true}, {id: Math.random().toFixed(0), text: "texto pruebasdf", finished: false}]
-    let filtered = []
+    let filtered = todos
 
+    function getFiltered(){
+        if(filterselected == "Todos"){
+                    filtered = todos
+                }
+                if(filterselected == "Activos"){
+                    filtered = todos.filter(task => task.finished === false);
+                }
+                if(filterselected == "Completados"){
+                    filtered = todos.filter(task => task.finished === true);
+                }
+    }
 </script>
 <div class="container">
     <div class="title">
@@ -18,15 +29,7 @@
             {#each filters as filter}
             <button on:click={()=>{
                 filterselected = filter
-                if(filterselected == "Todos"){
-                    filtered = todos
-                }
-                if(filterselected == "Activos"){
-                    filtered = todos.filter(task => task.finished === false);
-                }
-                if(filterselected == "Completados"){
-                    filtered = todos.filter(task => task.finished === true);
-                }
+                getFiltered()
             }} class={filter == filterselected ? 'isactive' : ''}>{filter}</button>
             {/each}
         </div>
@@ -43,7 +46,9 @@
     {#if filtered.length > 0}
     {#each filtered as todo, idx}
     <div class="todo">
-        <input type="checkbox" bind:checked={todo.finished} on:change={(e)=>{todo.finished=e.target.checked}} id="{todo.text + idx}" />
+        <input type="checkbox" bind:checked={todo.finished} on:change={(e)=>{todo.finished=e.target.checked
+        getFiltered()
+        }} id="{todo.text + idx}" />
         <label class="{todo.finished ? 'finished' : ''}" for="{todo.text + idx}">{todo.text}</label>
         <button on:click={()=>{
             todos.splice(idx,1)
