@@ -1,16 +1,14 @@
 <script>
 // @ts-nocheck
-
-	import { draggable } from "$lib/dnd";
-
     const filters = ["Todos","Activos","Completados"]
     let filterselected = "Todos"
     let newtodo = ""
 
     let todos = [{id: Math.random().toFixed(0), text: "texto prueba2", finished: false}, {id: Math.random().toFixed(0), text: "texto prueba343", finished: true}, {id: Math.random().toFixed(0), text: "texto pruebasdf", finished: false}]
     let filtered = []
+
 </script>
-<div class="container" use:draggable={"test"}>
+<div class="container">
     <div class="title">
         {new Date().toDateString()}
     </div>
@@ -20,6 +18,15 @@
             {#each filters as filter}
             <button on:click={()=>{
                 filterselected = filter
+                if(filterselected == "Todos"){
+                    filtered = todos
+                }
+                if(filterselected == "Activos"){
+                    filtered = todos.filter(task => task.finished === false);
+                }
+                if(filterselected == "Completados"){
+                    filtered = todos.filter(task => task.finished === true);
+                }
             }} class={filter == filterselected ? 'isactive' : ''}>{filter}</button>
             {/each}
         </div>
@@ -33,8 +40,8 @@
     }} placeholder="Nueva tarea" >
 </div> 
 <div class="todos">
-    {#if todos.length > 0}
-    {#each todos as todo, idx}
+    {#if filtered.length > 0}
+    {#each filtered as todo, idx}
     <div class="todo">
         <input type="checkbox" bind:checked={todo.finished} on:change={(e)=>{todo.finished=e.target.checked}} id="{todo.text + idx}" />
         <label class="{todo.finished ? 'finished' : ''}" for="{todo.text + idx}">{todo.text}</label>
