@@ -18,13 +18,28 @@
                     filtered = todos.filter(task => task.finished === true);
                 }
     }
+
+    function getIndexOfTask(id){
+        const idx = todos.map(e => e.id).indexOf(id);
+        return idx
+    }
+
+    function deleteTask(id){
+        const idx = getIndexOfTask(id)
+        todos.splice(idx,1)
+        todos = [...todos]
+        getFiltered()
+    }
 </script>
 <div class="container">
     <div class="title">
-        {new Date().toDateString()}
+        Ajas ajas
+        <div class="date">
+            {new Date().toDateString()}
+        </div>
     </div>
     <div class="task">
-        <span>5 tasks</span>
+        <span>{todos.length} tareas</span>
         <div class="task-status">
             {#each filters as filter}
             <button on:click={()=>{
@@ -36,6 +51,7 @@
     </div>
     <input bind:value={newtodo} class="new-todo" type="text" on:keyup={(e)=>{
         if(e.key == "Enter") {
+            if(newtodo == "") return
             todos.push({ id: Math.random().toFixed(0), text: newtodo, finished:false})
             todos = [...todos]
             newtodo = ""
@@ -51,15 +67,12 @@
         getFiltered()
         }} id="{todo.text + idx}" />
         <label class="{todo.finished ? 'finished' : ''}" for="{todo.text + idx}">{todo.text}</label>
-        <button on:click={()=>{
-            todos.splice(idx,1)
-            todos = todos
-        }} type="button">🗑</button>
+        <button on:click={deleteTask(todo.id)} type="button">🗑</button>
     </div>
     {/each}
     {:else}
     <div class="no-todos">
-        Sin pendientes
+        Sin {filterselected}
     </div>
     {/if}
 </div>
@@ -76,9 +89,15 @@
         font: 'DM Sans', sans-serif;
     }
     .title{
+        display: flex;
+        align-items: end;
         font-size: 20px;
         font-weight: 600;
         color: #555555;
+        & > .date{
+            margin-left: 15px;
+            font-size: 15px;
+        }
     }
     .task{
         display: grid;

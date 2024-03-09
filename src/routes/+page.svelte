@@ -1,9 +1,17 @@
 <script>
-import Card from "../components/Card.svelte";
+	import {onMount} from 'svelte'
+	import Card from "../components/Card.svelte";
 
+	onMount(()=>{
+		const data = localStorage.getItem('todos');
+		console.log(data);
+	})
 </script>
 <body>
-    <Card />
+	<div class="container">
+
+		<Card />
+	</div>
 </body>
 
 <style>
