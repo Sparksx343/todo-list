@@ -1,17 +1,21 @@
 <script>
 // @ts-nocheck
-    const filters = ["Todos","Activos","Completados"]
+    const filters = ["Todos","Pendientes","Completados"]
     let filterselected = "Todos"
     let newtodo = ""
 
-    let todos = [{id: Math.random().toFixed(0), text: "texto prueba2", finished: false}, {id: Math.random().toFixed(0), text: "texto prueba343", finished: true}, {id: Math.random().toFixed(0), text: "texto pruebasdf", finished: false}]
+    let todos = [{id: generateId(), text: "texto prueba2", finished: false}, {id: generateId(), text: "texto prueba343", finished: true}, {id: generateId(), text: "texto pruebasdf", finished: false}]
     let filtered = todos
+
+    function generateId(){
+        return Math.random().toString(16).slice(2)
+    }
 
     function getFiltered(){
         if(filterselected == "Todos"){
                     filtered = todos
                 }
-                if(filterselected == "Activos"){
+                if(filterselected == "Pendientes"){
                     filtered = todos.filter(task => task.finished === false);
                 }
                 if(filterselected == "Completados"){
@@ -31,6 +35,7 @@
         getFiltered()
     }
 </script>
+<div class="wrapper">
 <div class="container">
     <div class="title">
         Ajas ajas
@@ -52,7 +57,7 @@
     <input bind:value={newtodo} class="new-todo" type="text" on:keyup={(e)=>{
         if(e.key == "Enter") {
             if(newtodo == "") return
-            todos.push({ id: Math.random().toFixed(0), text: newtodo, finished:false})
+            todos.push({ id: generateId(), text: newtodo, finished:false})
             todos = [...todos]
             newtodo = ""
             getFiltered()
@@ -65,8 +70,8 @@
     <div class="todo">
         <input type="checkbox" bind:checked={todo.finished} on:change={(e)=>{todo.finished=e.target.checked
         getFiltered()
-        }} id="{todo.text + idx}" />
-        <label class="{todo.finished ? 'finished' : ''}" for="{todo.text + idx}">{todo.text}</label>
+        }} id="{todo.id}" />
+        <label class="{todo.finished ? 'finished' : ''}" for="{todo.id}">{todo.text}</label>
         <button on:click={deleteTask(todo.id)} type="button">🗑</button>
     </div>
     {/each}
@@ -76,10 +81,12 @@
     </div>
     {/if}
 </div>
+</div>
 <style>
     @import url('https://fonts.googleapis.com/css?family=DM+Sans:400,500,700&display=swap');
     * {
         font-family: 'DM Sans', sans-serif;
+        user-select: none;
     }
     .container{
         width: 450px;
